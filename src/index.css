@@ -1,0 +1,135 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family:
+    Inter,
+    'Noto Sans SC',
+    'Segoe UI',
+    sans-serif;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
+}
+
+/* 让主题完全由 html.dark 控制 */
+html {
+  background: #fafafa;
+  color: #111827;
+}
+
+html.dark {
+  background: #09090b;
+  color: #f4f4f5;
+}
+
+/* 编辑器正文 */
+.ProseMirror {
+  color: inherit;
+}
+
+/* 输入控件 */
+input,
+textarea,
+select {
+  color: inherit;
+  background: transparent;
+}
+
+/* 占位符 */
+::placeholder {
+  color: #9ca3af;
+}
+
+.dark ::placeholder {
+  color: #71717a;
+}
+
+/* 段首缩进 */
+.indent-enabled .ProseMirror p {
+  text-indent: 2em;
+}
+
+/* 阅读模式优化 */
+.read-mode .ProseMirror {
+  caret-color: transparent;
+}
+
+.read-mode .ProseMirror p {
+  cursor: default;
+}
+
+/* 阅读模式下隐藏选区高亮闪烁 */
+.read-mode .ProseMirror-focused {
+  outline: none;
+}
+
+/* ========================================
+   Fable 编辑器底部缓冲区（核心）
+======================================== */
+
+/* 编辑器容器 */
+.fable-editor-content {
+  min-height: 100%;
+}
+
+/* TipTap 实际正文区域 */
+.fable-editor-content .ProseMirror {
+  min-height: 100%;
+
+  /* 关键：底部留白 = 视口高度的 45% */
+  padding-bottom: 45vh;
+
+  /* 光标滚动时与顶部保持距离 */
+  scroll-padding-bottom: 45vh;
+  scroll-padding-top: 20vh;
+}
+
+/* 阅读模式稍微少一点留白 */
+.read-mode .fable-editor-content .ProseMirror {
+  padding-bottom: 30vh;
+}
+
+/* 小屏幕适配 */
+@media (max-width: 768px) {
+  .fable-editor-content .ProseMirror {
+    padding-bottom: 35vh;
+    scroll-padding-bottom: 35vh;
+  }
+}
+
+/* ===========================
+   Fable Editor - 分割线样式修复
+=========================== */
+
+.fable-editor-content .ProseMirror hr {
+  width: 100%;
+  max-width: 100%;
+  border: none;
+  border-top: 1px solid #d4d4d8;
+  margin: 2em 0;
+}
+
+.dark .fable-editor-content .ProseMirror hr {
+  border-top-color: #3f3f46;
+}
+
+/* 确保分割线不超出文字区域 */
+.fable-editor-content .ProseMirror hr {
+  max-width: 100% !important;
+}
+
+/* 分割线上下间距 */
+.ProseMirror hr {
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
