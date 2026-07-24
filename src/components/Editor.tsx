@@ -15,11 +15,63 @@ interface Props {
   onRequestEdit: () => void
 }
 
+// 纯文本 → HTML（将分割线标记转回 <hr>）
 function textToHtml(text: string) {
-  return text
-    .split('\n\n')
-    .map(p => `<p>${p.replace(/\n/g, '<br>')}</p>`)
-    .join('')
+  // 先用分割线标记分割，再处理段落
+  const parts = text.split('---hr---')
+  
+  return parts
+    .map((part, index) => {
+      const trimmed = part.trim()
+      if (!trimmed && index > 0 && index < parts.length - 1) {
+        // 空段落但前后有内容，可能是分割线相邻
+        return ''
+      }
+      // 将段落按 \n\n 分割
+      return trimmed
+        .split('\n\n')
+        .map(p => {
+          const para = p.trim()
+          if (!para) return ''
+          return `<p>${para.replace(/\n/g, '<br>')}</p>`
+        })
+        .join('')
+    })
+    .join('<hr>')
+}
+
+// HTML → 纯文本（将 <hr> 转为分割线标记）
+function htmlToText(html: string): string {
+  if (!html) return ''
+  
+  // 创建临时 DOM 解析 HTML
+  const div = document.createElement('div')
+  div.innerHTML = html
+  
+  // 收集文本片段
+  const parts: string[] = []
+  
+  div.childNodes.forEach(node => {
+    if (node.nodeType === Node.ELEMENT_NODE) {
+      const el = node as HTMLElement
+      if (el.tagName === 'HR') {
+        parts.push('---hr---')
+      } else {
+        const text = el.textContent || ''
+        if (text.trim()) {
+          parts.push(text)
+        }
+      }
+    } else if (node.nodeType === Node.TEXT_NODE) {
+      const text = node.textContent || ''
+      if (text.trim()) {
+        parts.push(text)
+      }
+    }
+  })
+  
+  // 合并：用 \n\n 连接段落，分割线用 ---hr--- 标记
+  return parts.join('\n\n')
 }
 
 export function Editor({ value, onChange, mode, onRequestEdit }: Props) {
@@ -28,6 +80,7 @@ export function Editor({ value, onChange, mode, onRequestEdit }: Props) {
   const [findText, setFindText] = useState('')
   const [replaceText, setReplaceText] = useState('')
   const { editorFontSize, indentParagraph } = useTheme()
+  const lastExternalValue = useRef(value)
 
   const editor = useEditor({
     extensions: [
@@ -48,25 +101,19 @@ export function Editor({ value, onChange, mode, onRequestEdit }: Props) {
       },
     },
     onUpdate: ({ editor }) => {
-      const text = editor.getText({
-        blockSeparator: '\n\n',
-      })
+      const html = editor.getHTML()
+      const text = htmlToText(html)
       onChange(text)
     },
     immediatelyRender: false,
   })
 
-  // 只在外部真正切换文档时同步，避免输入时覆盖内容
-  const lastExternalValue = useRef(value)
-
+  // 同步外部 value 变化
   useEffect(() => {
     if (!editor) return
     if (value === lastExternalValue.current) return
 
-    const currentText = editor.getText({
-      blockSeparator: '\n\n',
-    })
-
+    const currentText = htmlToText(editor.getHTML())
     if (currentText !== value) {
       editor.commands.setContent(textToHtml(value), { emitUpdate: false })
       lastExternalValue.current = value
@@ -86,7 +133,6 @@ export function Editor({ value, onChange, mode, onRequestEdit }: Props) {
     return matches?.length ?? 0
   }, [findText, value])
 
-  // 使用浏览器原生查找作为 MVP（最稳定）
   function triggerBrowserFind() {
     document.execCommand('find')
   }
@@ -220,7 +266,6 @@ export function Editor({ value, onChange, mode, onRequestEdit }: Props) {
             />
           </div>
 
-          {/* 阅读模式点击层 - 只阻挡点击，不处理逻辑 */}
           {mode === 'read' && (
             <div
               className="absolute inset-0 z-10"

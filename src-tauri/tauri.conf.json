@@ -2,7 +2,7 @@
   "$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
   "productName": "fable",
   "version": "0.1.0",
-  "identifier": "com.tauri.dev",
+  "identifier": "com.yourname.fable",
   "build": {
     "frontendDist": "../build",
     "devUrl": "http://localhost:3000",
@@ -40,6 +40,23 @@
     ],
     "android": {
       "debugApplicationIdSuffix": ".debug"
+    },
+    "windows": {
+      "certificateThumbprint": null,
+      "digestAlgorithm": "sha256",
+      "timestampUrl": ""
+    },
+    "macOS": {
+      "entitlements": null,
+      "exceptionDomain": "",
+      "frameworks": [],
+      "providerShortName": null,
+      "signingIdentity": null
+    },
+    "linux": {
+      "deb": {
+        "depends": []
+      }
     }
   }
 }

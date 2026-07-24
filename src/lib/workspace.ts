@@ -1,20 +1,6 @@
 import { invoke } from '@tauri-apps/api/core'
 import type { Work, WorkMeta } from '@/types/work'
 
-// 固定到 G 盘
-const WORKSPACE = 'G:/documentsave/FableWorkspace'
-const WORKS_DIR = `${WORKSPACE}/works`
-
-async function ensureWorkspace() {
-  const has = await fs.exists(WORKS_DIR)
-
-  if (!has) {
-    await fs.mkdir(WORKS_DIR, {
-      recursive: true,
-    })
-  }
-}
-
 export async function createWork(
   title: string,
   summary: string = '',

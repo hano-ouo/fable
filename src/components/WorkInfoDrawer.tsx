@@ -23,6 +23,7 @@ export function WorkInfoDrawer({
     return work?.meta.tags ?? []
   }, [work])
 
+  // ✅ 先判断，再定义函数
   if (!open || !work) return null
 
   function updateMeta<K extends keyof typeof work.meta>(
@@ -113,16 +114,16 @@ export function WorkInfoDrawer({
               />
             </div>
 
-            {/* 简介 */}
+            {/* summary */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-zinc-700 dark:text-zinc-300">
-                一句话简介
+                summary
               </label>
 
               <textarea
                 value={work.meta.summary}
                 onChange={e => updateMeta('summary', e.target.value)}
-                placeholder="例如：雨夜重逢后，两人不得不重新面对那段未说出口的感情。"
+                placeholder="例如：没想到多年后，在那个地方又见到了他。"
                 rows={4}
                 className="w-full resize-none rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-zinc-50 dark:bg-zinc-900 px-4 py-3 text-zinc-900 dark:text-zinc-100 outline-none focus:border-zinc-400 dark:focus:border-zinc-500 leading-7"
               />

@@ -29,6 +29,7 @@ export function EditorToolbar({ editor }: Props) {
   if (!editor) return null
 
   function insertText(text: string) {
+    if (!editor) return  // 添加空值检查
     editor.chain().focus().insertContent(text).run()
   }
 
@@ -96,8 +97,6 @@ export function EditorToolbar({ editor }: Props) {
         )}
 
         <div className="w-px h-6 bg-zinc-200 dark:bg-zinc-700 mx-1" />
-
-        {/* 删除了 "引用" 和 "列表" 按钮 */}
 
         {button('分隔线', () =>
           editor.chain().focus().setHorizontalRule().run()
@@ -193,7 +192,7 @@ export function EditorToolbar({ editor }: Props) {
               <span className="font-mono text-xs px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">⌘H</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-zinc-600 dark:text-zinc-400">退出阅读模式</span>
+              <span className="text-zinc-600 dark:text-zinc-400">退出编辑模式</span>
               <span className="font-mono text-xs px-2 py-0.5 rounded bg-zinc-100 dark:bg-zinc-800 text-zinc-700 dark:text-zinc-300">Esc</span>
             </div>
             <div className="flex items-center justify-between">

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { getDashboardStats, loadAnalytics, getWorkTotalDuration } from '@/lib/analytics'
+import { getDashboardStats, loadAnalytics } from '@/lib/analytics'
 import type { DashboardStats } from '@/types/analytics'
 import type { WorkMeta } from '@/types/work'
 
@@ -14,6 +14,7 @@ export function Dashboard({ works, onOpenWork }: Props) {
     monthWords: 0,
     streakDays: 0,
     totalWords: 0,
+    totalDuration: 0,
   })
 
   const [heatmap, setHeatmap] = useState<Record<string, number>>({})
@@ -201,7 +202,7 @@ export function Dashboard({ works, onOpenWork }: Props) {
 
                       {duration > 0 && (
                         <div className="text-xs text-zinc-400">
-                          📖 {formatDuration(duration)}
+                          写作 {formatDuration(duration)}
                         </div>
                       )}
                     </div>
